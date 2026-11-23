@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://g00gle1b.github.io/Bi/sitemap.xml
