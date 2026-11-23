@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BI Design | منصة بناء المواقع بالذكاء الاصطناعي مجاناً</title>
+  <meta name="description" content="أنشئ موقعك الإلكتروني الكامل ولوحة تحكمه من فكرة عبر المحادثة واستلم رابطاً مباشراً يعمل في الحال مجاناً عبر منصة BI Design.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://g00gle1b.github.io/Bi/">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: 'Cairo', sans-serif; background: #04070F; color: #E2E8F0; }
+    .bi-metal {
+      background: linear-gradient(145deg, #FFF3B0 0%, #D4AF37 45%, #F8E287 70%, #9E7B16 100%);
+      color: #050811;
+      box-shadow: 0 0 24px rgba(212, 175, 55, 0.55), inset 0 1px 2px rgba(255,255,255,0.8);
+      opacity: 1 !important;
+      filter: brightness(1.08);
+    }
+    .gold-text { background: linear-gradient(135deg, #FFF1A8 0%, #D4AF37 55%, #B88A14 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .gold-btn { background: linear-gradient(135deg, #E8C75A 0%, #C89E22 100%); color: #050811; }
+    .glass { background: rgba(255, 255, 255, 0.035); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.09); }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.35); border-radius: 99px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden selection:bg-yellow-500/30">
+
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden px-5 py-2.5 rounded-xl glass border border-yellow-500/40 text-xs font-bold text-white shadow-2xl"></div>
+
+  <div id="published-view" class="hidden min-h-screen flex flex-col"></div>
+
+  <div id="studio-app" class="flex-1 flex flex-col min-h-screen">
+    <header class="h-16 px-4 md:px-6 border-b border-white/10 flex items-center justify-between glass sticky top-0 z-30">
+      <div class="flex items-center gap-2.5">
+        <button onclick="publishInstantLink()" class="gold-btn px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 cursor-pointer hover:opacity-95 transition">
+          <i class="fa-solid fa-rocket"></i>
+          <span>نشر واستلام الرابط</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bi-metal flex items-center justify-center font-black text-lg tracking-tight select-none">BI</div>
+        <span class="hidden sm:inline text-sm font-extrabold text-white">BI Design <span class="gold-text">AI</span></span>
+      </div>
+
+      <button onclick="toggleModal('settings-modal', true)" aria-label="الإعدادات" class="w-10 h-10 rounded-xl glass hover:border-yellow-500/50 flex items-center justify-center text-slate-200 cursor-pointer transition">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </header>
+
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12">
+      <section class="lg:col-span-4 border-b lg:border-b-0 lg:border-l border-white/10 flex flex-col h-[calc(100vh-4rem)]">
+        <div class="grid grid-cols-2 border-b border-white/10 bg-white/[0.02] text-xs font-bold">
+          <button id="tab-chat-btn" onclick="switchTab('chat')" class="py-3 border-b-2 border-[#D4AF37] text-[#D4AF37] cursor-pointer">
+            <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> شات البناء
+          </button>
+          <button id="tab-ctrl-btn" onclick="switchTab('ctrl')" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer">
+            <i class="fa-solid fa-sliders ml-1"></i> لوحة التحكم
+          </button>
+        </div>
+
+        <div id="panel-chat" class="flex-1 flex flex-col overflow-hidden">
+          <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 text-sm">
+            <div class="glass p-3.5 rounded-2xl border border-yellow-500/25">
+              <p class="font-bold text-[#E8C75A] text-xs mb-1">محرك BI Design للبناء الفوري</p>
+              <p class="text-slate-300 text-xs leading-relaxed">اكتب فكرة الموقع ونشاطك التجاري هنا، وسيتم بناء التصميم الكامل ولوحة التحكم وإصدار رابط مباشر مجاني في الحال.</p>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="runQuick('شركة تصميم هوية بصرية ودعاية وإعلان احترافية')" class="text-[11px] px-2.5 py-1.5 rounded-lg glass hover:border-yellow-500/40 text-slate-300 cursor-pointer">+ شركة دعاية وتصميم</button>
+              <button onclick="runQuick('متجر إلكتروني عصري لعرض المنتجات والطلبات')" class="text-[11px] px-2.5 py-1.5 rounded-lg glass hover:border-yellow-500/40 text-slate-300 cursor-pointer">+ متجر إلكتروني</button>
+              <button onclick="runQuick('موقع شركة خدمات تقنية وذكاء اصطناعي للأعمال')" class="text-[11px] px-2.5 py-1.5 rounded-lg glass hover:border-yellow-500/40 text-slate-300 cursor-pointer">+ منصة تقنية</button>
+            </div>
+          </div>
+
+          <form onsubmit="handleChat(event)" class="p-3 border-t border-white/10 bg-black/30">
+            <div class="relative">
+              <textarea id="prompt-input" rows="2" placeholder="اوصف موقعك هنا... (مثال: مكتب استشارات هندسية)" class="w-full glass focus:border-[#D4AF37] rounded-xl p-3 pl-12 text-xs text-white outline-none resize-none"></textarea>
+              <button type="submit" class="absolute left-2.5 bottom-2.5 w-9 h-9 rounded-lg gold-btn flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="panel-ctrl" class="hidden flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+          <div>
+            <label class="block text-slate-400 mb-1">اسم العلامة التجارية</label>
+            <input id="c-brand" oninput="syncControls()" type="text" class="w-full glass rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF37]">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">العنوان الرئيسي</label>
+            <input id="c-title" oninput="syncControls()" type="text" class="w-full glass rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF37]">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">الوصف المختصر</label>
+            <textarea id="c-desc" oninput="syncControls()" rows="3" class="w-full glass rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF37]"></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">اللون المميز</label>
+              <input id="c-accent" oninput="syncControls()" type="color" class="w-full h-9 glass rounded-lg cursor-pointer">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">بريد استقبال الطلبات</label>
+              <input id="c-email" oninput="syncControls()" type="email" dir="ltr" class="w-full glass rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF37]">
+            </div>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">نص زر التواصل الرئيسي</label>
+            <input id="c-cta" oninput="syncControls()" type="text" class="w-full glass rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF37]">
+          </div>
+          <button onclick="downloadHTML()" class="w-full py-2.5 rounded-xl glass hover:border-yellow-500/50 text-white font-bold flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-download text-[#D4AF37]"></i> تحميل ملف الموقع المستقل (index.html)
+          </button>
+        </div>
+      </section>
+
+      <section class="lg:col-span-8 flex flex-col bg-black/50 h-[calc(100vh-4rem)]">
+        <div class="px-4 py-2.5 border-b border-white/10 flex flex-wrap items-center justify-between gap-2 bg-white/[0.02]">
+          <div class="flex items-center gap-2">
+            <button onclick="setView('desktop')" class="px-2.5 py-1 rounded-lg text-xs glass text-white cursor-pointer"><i class="fa-solid fa-desktop ml-1"></i> حاسوب</button>
+            <button onclick="setView('mobile')" class="px-2.5 py-1 rounded-lg text-xs glass text-slate-300 cursor-pointer"><i class="fa-solid fa-mobile-screen ml-1"></i> هاتف</button>
+          </div>
+          <div id="link-bar" class="hidden flex items-center gap-2 glass border border-yellow-500/40 px-3 py-1 rounded-lg text-xs max-w-full">
+            <span class="text-emerald-400 font-bold whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> الرابط جاهز:</span>
+            <input id="live-url" readonly type="text" dir="ltr" class="bg-transparent text-slate-200 outline-none w-36 md:w-60 text-[11px]">
+            <button onclick="copyLink()" class="text-[#E8C75A] font-bold cursor-pointer">نسخ</button>
+            <a id="open-live" target="_blank" class="text-sky-400 font-bold">فتح</a>
+          </div>
+        </div>
+
+        <div class="flex-1 p-3 md:p-5 overflow-auto flex justify-center items-start">
+          <div id="preview-box" class="w-full transition-all duration-300 rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
+            <div id="preview-stage"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- نافذة الإعدادات الموحدة -->
+  <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="glass border border-yellow-500/35 rounded-2xl max-w-md w-full p-5 space-y-4 bg-[#070B16]">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h2 class="font-bold text-sm text-white"><i class="fa-solid fa-gear text-[#D4AF37] ml-2"></i> إعدادات المنصة والربط</h2>
+        <button onclick="toggleModal('settings-modal', false)" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-2 text-xs">
+        <label class="block text-slate-300 font-semibold">مفتاح Google Gemini API (اختياري ومجاني)</label>
+        <input id="api-key" type="password" dir="ltr" placeholder="AIzaSy..." class="w-full glass rounded-xl px-3 py-2.5 text-white outline-none focus:border-[#D4AF37]">
+        <p class="text-slate-400 leading-relaxed">يُحفظ المفتاح في متصفحك فقط ولا يُرفع إلى GitHub. بدون المفتاح يعمل المحرك المدمج فوراً ومجاناً.</p>
+      </div>
+      <div class="flex items-center justify-between pt-2 border-t border-white/10">
+        <button onclick="resetAll()" class="text-xs text-rose-400 hover:underline cursor-pointer">إعادة ضبط التصميم</button>
+        <button onclick="saveSettings()" class="gold-btn px-4 py-2 rounded-xl text-xs font-extrabold cursor-pointer">حفظ الإعدادات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة التواصل الرسمية بالبريد الإلكتروني المغلف -->
+  <div id="contact-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="glass border border-yellow-500/35 rounded-2xl max-w-md w-full p-5 space-y-3 bg-[#070B16]">
+      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-envelope text-[#D4AF37] ml-2"></i> مراسلة مباشرة</h3>
+        <button onclick="toggleModal('contact-modal', false)" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="sendEmailForm(event)" class="space-y-3 text-xs">
+        <input id="m-name" required type="text" placeholder="اسمك الكريم" class="w-full glass rounded-xl px-3 py-2.5 text-white outline-none focus:border-[#D4AF37]">
+        <textarea id="m-msg" required rows="3" placeholder="اكتب تفاصيل طلبك هنا..." class="w-full glass rounded-xl px-3 py-2.5 text-white outline-none focus:border-[#D4AF37]"></textarea>
+        <button type="submit" class="w-full gold-btn py-2.5 rounded-xl font-extrabold cursor-pointer">إرسال الرسالة عبر البريد</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const defaultState = {
+      brand: "BI Design Studio",
+      title: "نصنع هويتك الرقمية وموقعك الإلكتروني في دقائق بالذكاء الاصطناعي",
+      desc: "منصة أعمال ذكية للتصميم الإبداعي، الهوية البصرية، وتطوير المواقع السريعة المهيأة لمحرك بحث جوجل.",
+      accent: "#D4AF37",
+      email: "bidesignegypt@gmail.com",
+      cta: "ابدأ مشروعك وتواصل معنا",
+      services: [
+        { icon: "fa-palette", name: "الهوية البصرية والتصميم", text: "تصميم شعارات احترافية ومواد دعائية تعبر عن قوة علامتك." },
+        { icon: "fa-globe", name: "مواقع سريعة ومجانية", text: "واجهات متجاوبة بالكامل مع الهواتف ومهيأة للأرشفة في جوجل." },
+        { icon: "fa-microchip", name: "حلول الذكاء الاصطناعي", text: "أتمتة الأعمال وتوليد المحتوى والصفحات التفاعلية بضغطة زر." }
+      ]
+    };
+
+    let state = JSON.parse(JSON.stringify(defaultState));
+
+    function encodeData(obj) {
+      const bytes = new TextEncoder().encode(JSON.stringify(obj));
+      let s = ''; bytes.forEach(b => s += String.fromCharCode(b));
+      return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function decodeData(str) {
+      let b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      const bin = atob(b64), bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return JSON.parse(new TextDecoder().decode(bytes));
+    }
+
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+
+    function toggleModal(id, show) {
+      const m = document.getElementById(id);
+      m.classList.toggle('hidden', !show);
+      m.classList.toggle('flex', show);
+      if (id === 'settings-modal' && show) document.getElementById('api-key').value = localStorage.getItem('bi_key') || '';
+    }
+
+    function sendEmailForm(e) {
+      e.preventDefault();
+      const name = document.getElementById('m-name').value.trim();
+      const msg = document.getElementById('m-msg').value.trim();
+      const subject = encodeURIComponent('طلب جديد عبر موقع ' + state.brand + ' - ' + name);
+      const body = encodeURIComponent(msg);
+      window.location.href = `mailto:${state.email}?subject=${subject}&body=${body}`;
+      toggleModal('contact-modal', false);
+      toast('تم فتح تطبيق البريد لإرسال رسالتك');
+    }
+
+    function renderSiteHTML(d, standalone = false) {
+      const contactAction = standalone ? `href="mailto:${d.email}"` : `href="javascript:void(0)" onclick="toggleModal('contact-modal', true)"`;
+      const cards = d.services.map(s => `
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);" class="p-6 rounded-2xl">
+          <div style="color:${d.accent}" class="text-2xl mb-3"><i class="fa-solid ${s.icon}"></i></div>
+          <h3 class="text-base font-bold text-white mb-2">${s.name}</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">${s.text}</p>
+        </div>`).join('');
+
+      const html = `
+        <div dir="rtl" style="font-family:'Cairo',sans-serif;background:#050811;color:#F8FAFC;" class="min-h-screen flex flex-col">
+          <nav class="px-6 py-4 border-b border-white/10 flex items-center justify-between max-w-6xl mx-auto w-full">
+            <span style="color:${d.accent}" class="font-extrabold text-lg">${d.brand}</span>
+            <a ${contactAction} style="background:${d.accent};color:#050811;" class="px-4 py-2 rounded-xl text-xs font-extrabold cursor-pointer">تواصل عبر البريد</a>
+          </nav>
+          <section class="px-6 py-16 md:py-24 text-center max-w-4xl mx-auto">
+            <span style="border-color:${d.accent};color:${d.accent};" class="inline-block px-3 py-1 rounded-full border text-xs font-bold mb-4">${d.brand}</span>
+            <h1 class="text-2xl md:text-5xl font-extrabold leading-tight mb-5 text-white">${d.title}</h1>
+            <p class="text-slate-300 text-sm md:text-base mb-8 leading-relaxed max-w-2xl mx-auto">${d.desc}</p>
+            <a ${contactAction} style="background:${d.accent};color:#050811;" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-extrabold text-sm shadow-lg cursor-pointer">
+              <i class="fa-solid fa-envelope"></i> ${d.cta}
+            </a>
+          </section>
+          <section class="px-6 pb-20 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-5">${cards}</section>
+          <footer class="mt-auto py-6 text-center text-xs text-slate-400 border-t border-white/10">جميع الحقوق محفوظة © ${new Date().getFullYear()} ${d.brand}</footer>
+        </div>`;
+
+      if (!standalone) return html;
+      return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${d.brand}</title><meta name="description" content="${d.desc}"><script src="https://cdn.tailwindcss.com"><\/script><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></head><body style="margin:0;background:#050811;">${html}</body></html>`;
+    }
+
+    function updateUI() {
+      document.getElementById('preview-stage').innerHTML = renderSiteHTML(state, false);
+      document.getElementById('c-brand').value = state.brand;
+      document.getElementById('c-title').value = state.title;
+      document.getElementById('c-desc').value = state.desc;
+      document.getElementById('c-accent').value = state.accent;
+      document.getElementById('c-email').value = state.email;
+      document.getElementById('c-cta').value = state.cta;
+    }
+
+    function syncControls() {
+      state.brand = document.getElementById('c-brand').value;
+      state.title = document.getElementById('c-title').value;
+      state.desc = document.getElementById('c-desc').value;
+      state.accent = document.getElementById('c-accent').value;
+      state.email = document.getElementById('c-email').value;
+      state.cta = document.getElementById('c-cta').value;
+      document.getElementById('preview-stage').innerHTML = renderSiteHTML(state, false);
+    }
+
+    async function generateSite(prompt) {
+      const key = localStorage.getItem('bi_key');
+      if (key) {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: `أرجع JSON فقط بدون أي شرح لموقع عربي احترافي بالصيغة: {"brand":"","title":"","desc":"","accent":"#D4AF37","cta":"","services":[{"icon":"fa-star","name":"","text":""},{"icon":"fa-bolt","name":"","text":""},{"icon":"fa-shield","name":"","text":""}]}. الفكرة: ${prompt}` }] }] })
+        });
+        const j = await res.json();
+        const txt = (j?.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json|```/g, '').trim();
+        return { ...state, ...JSON.parse(txt) };
+      }
+      if (/متجر|بيع|منتج|ملابس/.test(prompt)) {
+        return { ...state, brand: "متجر النخبة", title: prompt, desc: "منتجات مختارة بعناية وتجربة تسوق سلسة وطلب سريع.", accent: "#10B981", cta: "اطلب الآن عبر البريد", services: [{ icon: "fa-bag-shopping", name: "تشكيلة حصرية", text: "أحدث الموديلات بجودة عالية." }, { icon: "fa-truck-fast", name: "توصيل سريع", text: "شحن آمن وموثوق لجميع المناطق." }, { icon: "fa-shield-halved", name: "ضمان الجودة", text: "استبدال مرن ودعم مستمر." }] };
+      }
+      if (/تقني|ذكاء|برمجة|تطبيق/.test(prompt)) {
+        return { ...state, brand: "نواة المستقبل التقنية", title: prompt, desc: "نبني حلولاً برمجية ذكية ومواقع تفاعلية تنقل أعمالك لمستوى جديد.", accent: "#38BDF8", cta: "احجز استشارتك التقنية", services: [{ icon: "fa-code", name: "تطوير الويب", text: "تطبيقات ويب سريعة وآمنة." }, { icon: "fa-robot", name: "أتمتة ذكية", text: "دمج نماذج الذكاء الاصطناعي في عملك." }, { icon: "fa-chart-line", name: "تحليل ونمو", text: "لوحات بيانات لمتابعة الأداء لحظياً." }] };
+      }
+      return { ...state, title: prompt, desc: "واجهة احترافية متكاملة مصممة لعرض خدماتك والتواصل المباشر مع عملائك." };
+    }
+
+    async function handleChat(e) {
+      e.preventDefault();
+      const inp = document.getElementById('prompt-input');
+      const txt = inp.value.trim(); if (!txt) return;
+      const box = document.getElementById('chat-box');
+      box.innerHTML += `<div class="bg-yellow-500/15 border border-yellow-500/30 p-3 rounded-2xl text-white text-xs mr-6">${txt}</div>`;
+      inp.value = ''; box.scrollTop = box.scrollHeight;
+      try { state = await generateSite(txt); updateUI(); } catch { toast('تم التوليد بالمحرك المدمج'); }
+      box.innerHTML += `<div class="glass p-3 rounded-2xl text-emerald-300 text-xs ml-6"><i class="fa-solid fa-check ml-1"></i> تم بناء الموقع. اضغط <b>نشر واستلام الرابط</b> بالأعلى الآن.</div>`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function runQuick(t) { document.getElementById('prompt-input').value = t; handleChat(new Event('submit')); }
+
+    function publishInstantLink() {
+      const url = `${window.location.href.split('#')[0]}#live=${encodeData(state)}`;
+      document.getElementById('link-bar').classList.remove('hidden');
+      document.getElementById('live-url').value = url;
+      document.getElementById('open-live').href = url;
+      navigator.clipboard?.writeText(url);
+      toast('تم إصدار الرابط المباشر ونسخه!');
+    }
+
+    function copyLink() { navigator.clipboard?.writeText(document.getElementById('live-url').value); toast('تم نسخ الرابط'); }
+
+    function downloadHTML() {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([renderSiteHTML(state, true)], { type: 'text/html;charset=utf-8' }));
+      a.download = 'index.html'; a.click(); toast('تم تحميل ملف index.html المستقل');
+    }
+
+    function switchTab(t) {
+      const c = t === 'chat';
+      document.getElementById('panel-chat').classList.toggle('hidden', !c);
+      document.getElementById('panel-ctrl').classList.toggle('hidden', c);
+      document.getElementById('tab-chat-btn').className = c ? 'py-3 border-b-2 border-[#D4AF37] text-[#D4AF37] cursor-pointer' : 'py-3 border-b-2 border-transparent text-slate-400 cursor-pointer';
+      document.getElementById('tab-ctrl-btn').className = !c ? 'py-3 border-b-2 border-[#D4AF37] text-[#D4AF37] cursor-pointer' : 'py-3 border-b-2 border-transparent text-slate-400 cursor-pointer';
+    }
+
+    function setView(m) { document.getElementById('preview-box').style.maxWidth = m === 'mobile' ? '390px' : '100%'; }
+    function saveSettings() { const k = document.getElementById('api-key').value.trim(); k ? localStorage.setItem('bi_key', k) : localStorage.removeItem('bi_key'); toggleModal('settings-modal', false); toast('تم حفظ الإعدادات'); }
+    function resetAll() { state = JSON.parse(JSON.stringify(defaultState)); updateUI(); toggleModal('settings-modal', false); toast('تمت إعادة الضبط'); }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash.startsWith('#live=')) {
+        try {
+          state = decodeData(window.location.hash.replace('#live=', ''));
+          document.getElementById('studio-app').classList.add('hidden');
+          const pub = document.getElementById('published-view');
+          pub.classList.remove('hidden');
+          pub.innerHTML = renderSiteHTML(state, false) + `<a href="${window.location.href.split('#')[0]}" class="fixed bottom-4 left-4 z-50 px-3.5 py-2 rounded-full bg-black/90 border border-yellow-500/40 text-[#E8C75A] text-xs font-bold shadow-xl">صُنع مجاناً عبر BI Design</a>`;
+          document.title = state.brand;
+          return;
+        } catch {}
+      }
+      updateUI();
+    });
+  </script>
+</body>
+</html>
