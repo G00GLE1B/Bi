@@ -1,126 +1,1916 @@
-export default {
-  async fetch(request, env) {
-    const allowedOrigin = "https://g00gle1b.github.io";
-    const origin = request.headers.get("Origin") || "";
-
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": allowedOrigin,
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    };
-
-    if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders });
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>BI Design | AI Website Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #07080A;
+      --surface: rgba(255, 255, 255, 0.035);
+      --surface-strong: rgba(255, 255, 255, 0.065);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-bright: rgba(255, 255, 255, 0.2);
+      --text: #F4F6F8;
+      --muted: #9AA2AE;
+      --gold: #D4AF37;
+      --silver: #D8DEE9;
+      --accent: #D4AF37;
+      --danger: #EF4444;
+      --success: #10B981;
+      --radius: 16px;
+      --radius-sm: 11px;
     }
 
-    if (request.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
-        status: 405,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    if (origin !== allowedOrigin) {
-      return new Response(JSON.stringify({ error: "Forbidden Origin" }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    html, body {
+      height: 100%;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      overflow: hidden;
     }
 
-    if (!env.GEMINI_API_KEY) {
-      return new Response(JSON.stringify({ error: "Missing API key configuration" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    body {
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08), transparent 48%),
+        radial-gradient(circle at 85% 90%, rgba(216, 222, 233, 0.05), transparent 45%);
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
     }
 
-    try {
-      const { prompt, currentState } = await request.json();
+    /* Permanently Bright Metallic BI Emblem */
+    .bi-emblem {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #FFFDF7;
+      background: linear-gradient(135deg, #FFF5C3 0%, #D4AF37 45%, #F7E7A9 72%, #D8DEE9 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.55)) brightness(1.12);
+      opacity: 1 !important;
+      user-select: none;
+    }
 
-      if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0 || prompt.length > 600) {
-        return new Response(JSON.stringify({ error: "Invalid prompt" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+    .bi-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, rgba(212, 175, 55, 0.2), rgba(216, 222, 233, 0.08));
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      box-shadow: 0 0 18px rgba(212, 175, 55, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      opacity: 1 !important;
+      flex-shrink: 0;
+    }
+
+    .bi-badge-lg {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      margin: 0 auto 18px;
+      font-size: 1.75rem;
+      background: linear-gradient(145deg, rgba(212, 175, 55, 0.24), rgba(216, 222, 233, 0.1));
+      border: 1.5px solid rgba(212, 175, 55, 0.7);
+      box-shadow: 0 0 32px rgba(212, 175, 55, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Top Bar (Clutter-Free) */
+    .topbar {
+      height: 62px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7, 8, 10, 0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .engine-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    .status-dot.connected {
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* Mobile View Switcher */
+    .view-tabs {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .view-tab {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .view-tab.active {
+      background: rgba(255, 255, 255, 0.11);
+      color: var(--text);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-strong);
+      border-color: var(--border-bright);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Workspace Grid */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Chat Panel */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.015);
+      min-height: 0;
+    }
+
+    .chat-log {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+
+    .msg {
+      max-width: 90%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .msg.ai {
+      align-self: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: #FFFDF7;
+    }
+
+    .msg-meta {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .quick-chips {
+      display: flex;
+      gap: 8px;
+      padding: 0 14px 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .quick-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--silver);
+      font-size: 0.76rem;
+      font-weight: 500;
+      padding: 7px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--accent);
+      color: #FFFFFF;
+      background: var(--surface-strong);
+    }
+
+    .chat-form {
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(7, 8, 10, 0.82);
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus {
+      border-color: var(--accent);
+    }
+
+    .send-btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent);
+      color: #07080A;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: opacity 0.2s, transform 0.15s;
+      flex-shrink: 0;
+    }
+
+    .send-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .send-btn:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    /* Live Preview Stage */
+    .preview-panel {
+      overflow-y: auto;
+      padding: 24px 20px 44px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 0;
+    }
+
+    .preview-shell {
+      width: 100%;
+      max-width: 860px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.025);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+    }
+
+    .preview-nav {
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .preview-brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .preview-nav-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-bright);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+    }
+
+    .preview-nav-btn:hover {
+      border-color: var(--accent);
+      color: #FFFFFF;
+      background: var(--surface-strong);
+    }
+
+    .hero {
+      padding: 46px 26px 38px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-tagline {
+      display: inline-block;
+      padding: 6px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(1.65rem, 3.6vw, 2.55rem);
+      line-height: 1.18;
+      margin-bottom: 14px;
+      color: #FFFFFF;
+    }
+
+    .hero-desc {
+      max-width: 600px;
+      margin: 0 auto 26px;
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      padding: 12px 22px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent);
+      color: #07080A;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s, filter 0.2s;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-secondary {
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-bright);
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-strong);
+      border-color: var(--accent);
+    }
+
+    .services-section {
+      padding: 32px 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.12rem;
+      font-weight: 700;
+    }
+
+    .section-hint {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .service-card {
+      text-align: left;
+      width: 100%;
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .service-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      background: var(--surface-strong);
+    }
+
+    .service-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 1.05rem;
+    }
+
+    .service-name {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .service-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .service-cta {
+      margin-top: auto;
+      padding-top: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-footer {
+      padding: 18px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Drawer & Modal Backdrop */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.68);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      z-index: 40;
+    }
+
+    .backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Consolidated Settings Drawer */
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(360px, 92vw);
+      height: 100dvh;
+      background: #0B0D11;
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .setting-card {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .setting-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--silver);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .setting-help {
+      font-size: 0.76rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .field-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    .field-input:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .drawer-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-strong);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .drawer-btn:hover {
+      border-color: var(--border-bright);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .drawer-btn.accent {
+      background: var(--accent);
+      color: #07080A;
+      border-color: transparent;
+    }
+
+    .drawer-btn.danger {
+      border-color: rgba(239, 68, 68, 0.38);
+      color: #FCA5A5;
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    /* Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--accent);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(20px);
+      background: #07080A;
+    }
+
+    /* Modals */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 60;
+    }
+
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: min(440px, 100%);
+      border-radius: 18px;
+      border: 1px solid var(--border-bright);
+      background: #0D1016;
+      padding: 20px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.72);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .modal-actions > * {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .field-textarea {
+      width: 100%;
+      min-height: 88px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.86rem;
+      resize: vertical;
+      outline: none;
+    }
+
+    .field-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    /* Toast */
+    .toast-stack {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 80;
+      width: min(92vw, 380px);
+      pointer-events: none;
+    }
+
+    .toast {
+      padding: 11px 15px;
+      border-radius: 12px;
+      background: rgba(15, 18, 24, 0.95);
+      border: 1px solid var(--border-bright);
+      color: var(--text);
+      font-size: 0.84rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      animation: toastIn 0.2s ease;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Split -> Single View */
+    @media (min-width: 960px) {
+      .view-tabs {
+        display: none;
       }
+    }
 
-      const systemText = [
-        "You are a website builder engine for BI Design.",
-        "Return ONLY valid raw JSON with no markdown fences and no extra commentary.",
-        "Match the language of the user's prompt for text values.",
-        "Required JSON keys:",
-        "- brand (string)",
-        "- tagline (string)",
-        "- title (string)",
-        "- desc (string)",
-        "- accent (valid hex color code, e.g. #D4AF37)",
-        "- cta (string)",
-        "- email (string)",
-        "- services (array of 3 to 4 objects, each with: icon [FontAwesome class such as fa-wand-magic-sparkles, fa-code, fa-chart-line, fa-bag-shopping, fa-stethoscope, fa-shield-halved, fa-bolt, fa-briefcase], name, text)",
-        "Strict rules:",
-        "- Always write the word 'Google' in English.",
-        "- Never include phone numbers or WhatsApp links; contact must be via email only.",
-        "- Preserve the email address from currentState unless the user explicitly asks to change it.",
-        `Current State: ${JSON.stringify(currentState || {})}`,
-      ].join("\n");
+    @media (max-width: 959px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .chat-panel,
+      .preview-panel {
+        display: none;
+        border-right: none;
+      }
+      .workspace[data-mobile-view="chat"] .chat-panel {
+        display: flex;
+      }
+      .workspace[data-mobile-view="preview"] .preview-panel {
+        display: flex;
+      }
+      .preview-panel {
+        padding: 14px 12px 32px;
+      }
+      .hero {
+        padding: 32px 18px 28px;
+      }
+      .services-section {
+        padding: 24px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-cluster">
+      <div class="bi-badge" aria-hidden="true">
+        <span class="bi-emblem">BI</span>
+      </div>
+      <div class="brand-meta">
+        <span class="brand-title">BI Design</span>
+        <span class="engine-pill">
+          <span class="status-dot" id="engineDot"></span>
+          <span id="engineStatusText">Local Preview Engine</span>
+        </span>
+      </div>
+    </div>
 
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            system_instruction: {
-              parts: [{ text: systemText }],
-            },
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: prompt.trim() }],
-              },
-            ],
-            generationConfig: {
-              responseMimeType: "application/json",
-            },
-          }),
-        }
-      );
+    <div class="view-tabs" role="tablist" aria-label="Workspace Views">
+      <button type="button" class="view-tab active" data-view="preview" role="tab" aria-selected="true">
+        <i class="fa-solid fa-eye"></i> Preview
+      </button>
+      <button type="button" class="view-tab" data-view="chat" role="tab" aria-selected="false">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Builder
+      </button>
+    </div>
 
-      if (!geminiRes.ok) {
-        const errBody = await geminiRes.text();
-        return new Response(
-          JSON.stringify({ error: "Upstream AI error", status: geminiRes.status, details: errBody }),
+    <button type="button" class="icon-btn" id="openSettingsBtn" aria-label="Open Settings" title="Settings">
+      <i class="fa-solid fa-gear"></i>
+    </button>
+  </header>
+
+  <main class="workspace" id="workspace" data-mobile-view="preview">
+    <!-- Chat Builder -->
+    <section class="chat-panel" aria-label="AI Website Builder Chat">
+      <div class="chat-log" id="chatLog"></div>
+
+      <div class="quick-chips" aria-label="Quick Prompts">
+        <button type="button" class="chip" data-prompt="Build an AI creative agency website with metallic gold accent">AI Agency</button>
+        <button type="button" class="chip" data-prompt="Build a luxury e-commerce studio website with emerald accent">Luxury Store</button>
+        <button type="button" class="chip" data-prompt="Build a corporate security & branding firm with crimson accent">Security Firm</button>
+        <button type="button" class="chip" data-prompt="Build a Google cloud & data analytics consulting platform">Analytics Studio</button>
+      </div>
+
+      <form class="chat-form" id="chatForm">
+        <input
+          type="text"
+          id="chatInput"
+          class="chat-input"
+          placeholder="Describe your website or edit..."
+          maxlength="600"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="send-btn" id="sendBtn">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>Build</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- Live Website Preview -->
+    <section class="preview-panel" aria-label="Live Website Preview">
+      <article class="preview-shell" id="previewShell">
+        <div class="preview-nav">
+          <div class="preview-brand-row">
+            <div class="bi-badge" style="width:32px;height:32px;border-radius:9px;font-size:0.8rem;">
+              <span class="bi-emblem">BI</span>
+            </div>
+            <span id="pvBrand">BI Design</span>
+          </div>
+          <button type="button" class="preview-nav-btn" id="navContactBtn">
+            <i class="fa-regular fa-envelope"></i>
+            <span>Contact Us</span>
+          </button>
+        </div>
+
+        <div class="hero">
+          <div class="bi-badge bi-badge-lg" aria-hidden="true">
+            <span class="bi-emblem">BI</span>
+          </div>
+          <div class="hero-tagline" id="pvTagline">AI Creative Studio</div>
+          <h1 class="hero-title" id="pvTitle">Intelligent Brand Systems & Digital Platforms</h1>
+          <p class="hero-desc" id="pvDesc">
+            Transform ideas into high-impact digital experiences powered by Google AI workflows, custom web engineering, and clean executive visual identity.
+          </p>
+          <div class="hero-actions">
+            <button type="button" class="btn-primary" id="heroCtaBtn">
+              <i class="fa-solid fa-bolt"></i>
+              <span id="pvCtaText">Launch Your Project</span>
+            </button>
+            <button type="button" class="btn-secondary" id="heroContactBtn">
+              <i class="fa-regular fa-envelope"></i>
+              <span>Contact Us</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="services-section">
+          <div class="section-header">
+            <h2 class="section-title">Core Capabilities</h2>
+            <span class="section-hint">Select any card for details</span>
+          </div>
+          <div class="services-grid" id="pvServices"></div>
+        </div>
+
+        <footer class="preview-footer">
+          <span id="pvFooterBrand">BI Design — Powered by AI Creative Studio</span>
+          <button type="button" class="preview-nav-btn" id="footerContactBtn">
+            <i class="fa-regular fa-paper-plane"></i>
+            <span>Email Inquiry</span>
+          </button>
+        </footer>
+      </article>
+    </section>
+  </main>
+
+  <!-- Shared Backdrop -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- Settings Slide-Over Drawer -->
+  <aside class="drawer" id="settingsDrawer" aria-label="Settings Drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <span class="drawer-title"><i class="fa-solid fa-sliders"></i> Workspace Settings</span>
+      <button type="button" class="icon-btn" id="closeSettingsBtn" aria-label="Close Settings">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="setting-card">
+        <div class="setting-label">
+          <span><i class="fa-solid fa-cloud"></i> Cloudflare Worker URL</span>
+        </div>
+        <p class="setting-help">
+          Connect your live Worker endpoint to generate updates with Google Gemini. Leave blank to use the built-in Local Preview Engine.
+        </p>
+        <input
+          type="url"
+          id="workerUrlInput"
+          class="field-input"
+          placeholder="https://your-worker.workers.dev"
+          autocomplete="off"
+        />
+        <div class="btn-row">
+          <button type="button" class="drawer-btn accent" id="saveWorkerBtn">
+            <i class="fa-solid fa-check"></i> Save Endpoint
+          </button>
+          <button type="button" class="drawer-btn" id="testWorkerBtn">
+            <i class="fa-solid fa-plug"></i> Test Connection
+          </button>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-label">
+          <span><i class="fa-solid fa-volume-high"></i> Background Voice (TTS)</span>
+          <label class="switch" aria-label="Toggle Background Voice">
+            <input type="checkbox" id="ttsToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p class="setting-help">
+          Reads brief AI build confirmations in the background without blocking your screen.
+        </p>
+        <button type="button" class="drawer-btn" id="stopAudioBtn">
+          <i class="fa-solid fa-stop"></i> Stop Audio
+        </button>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-label">
+          <span><i class="fa-solid fa-code"></i> Export & Output</span>
+        </div>
+        <button type="button" class="drawer-btn" id="exportHtmlBtn">
+          <i class="fa-solid fa-download"></i> Export Standalone HTML
+        </button>
+        <button type="button" class="drawer-btn" id="copyHtmlBtn">
+          <i class="fa-regular fa-copy"></i> Copy Website HTML
+        </button>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-label">
+          <span><i class="fa-solid fa-rotate-left"></i> Workspace Maintenance</span>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="drawer-btn danger" id="resetSiteBtn">
+            <i class="fa-solid fa-arrow-rotate-left"></i> Reset Website
+          </button>
+          <button type="button" class="drawer-btn danger" id="clearChatBtn">
+            <i class="fa-regular fa-trash-can"></i> Clear Chat
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Contact Modal -->
+  <div class="modal" id="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="contactModalTitle">Direct Email Contact</h3>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Reach out to <strong id="contactBrandLabel" style="color:#FFF;">BI Design</strong> exclusively via email. Choose an action below:</p>
+      </div>
+      <div class="modal-actions">
+        <a id="mailtoActionBtn" href="mailto:bidesignegypt@gmail.com" class="btn-primary" style="text-decoration:none;justify-content:center;">
+          <i class="fa-regular fa-envelope"></i> Send Email
+        </a>
+        <button type="button" class="btn-secondary" id="copyEmailBtn" style="justify-content:center;">
+          <i class="fa-regular fa-copy"></i> Copy Email
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Inquiry Modal -->
+  <div class="modal" id="inquiryModal" role="dialog" aria-modal="true" aria-labelledby="inquiryModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="inquiryModalTitle">Start a Project Brief</h3>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="inquiryForm" class="modal-body">
+        <input type="text" id="inqName" class="field-input" placeholder="Your Name or Company" required />
+        <textarea id="inqDetails" class="field-textarea" placeholder="Briefly describe your goals, timeline, and deliverables..." required></textarea>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary" style="justify-content:center;">
+            <i class="fa-regular fa-paper-plane"></i> Open Email Draft
+          </button>
+          <button type="button" class="btn-secondary" data-close-modal style="justify-content:center;">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Service Detail Modal -->
+  <div class="modal" id="serviceModal" role="dialog" aria-modal="true" aria-labelledby="serviceModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="serviceModalTitle">Service Details</h3>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="service-icon" id="serviceModalIcon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <strong id="serviceModalName" style="color:#FFF;font-size:1rem;">Service Name</strong>
+        </div>
+        <p id="serviceModalDesc"></p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="editServiceInChatBtn" style="justify-content:center;">
+          <i class="fa-solid fa-pen-to-square"></i> Edit This Service in Chat
+        </button>
+        <button type="button" class="btn-secondary" id="inquireServiceBtn" style="justify-content:center;">
+          <i class="fa-regular fa-envelope"></i> Contact Us
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEYS = {
+        STATE: "bi_design_site_state_v2",
+        CHAT: "bi_design_chat_v2",
+        WORKER: "bi_design_worker_url_v2",
+        TTS: "bi_design_tts_v2"
+      };
+
+      const DEFAULT_STATE = {
+        brand: "BI Design",
+        tagline: "AI Creative Studio",
+        title: "Intelligent Brand Systems & Digital Platforms",
+        desc: "Transform ideas into high-impact digital experiences powered by Google AI workflows, custom web engineering, and clean executive visual identity.",
+        accent: "#D4AF37",
+        cta: "Launch Your Project",
+        email: "bidesignegypt@gmail.com",
+        services: [
           {
-            status: 502,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            icon: "fa-wand-magic-sparkles",
+            name: "AI Brand Identity",
+            text: "Executive logos, metallic emblems, and cohesive visual systems crafted for modern digital companies."
+          },
+          {
+            icon: "fa-code",
+            name: "Interactive Web Engineering",
+            text: "Fast, zero-bloat web applications and conversion-focused landing pages engineered for mobile and desktop."
+          },
+          {
+            icon: "fa-chart-line",
+            name: "Decision Intelligence",
+            text: "Google-ready analytics, operational dashboards, and data strategy built for measurable business growth."
+          },
+          {
+            icon: "fa-bolt",
+            name: "Workflow Automation",
+            text: "Smart AI assistants and automated lead pipelines that scale output with zero recurring platform overhead."
           }
-        );
+        ]
+      };
+
+      const DEFAULT_CHAT = [
+        {
+          role: "ai",
+          text: "Welcome to BI Design. Describe the website, industry, accent color, or service changes you want and I will update the live preview immediately.",
+          meta: "System Ready"
+        }
+      ];
+
+      const ALLOWED_ICONS = new Set([
+        "fa-wand-magic-sparkles",
+        "fa-code",
+        "fa-chart-line",
+        "fa-bag-shopping",
+        "fa-stethoscope",
+        "fa-shield-halved",
+        "fa-bolt",
+        "fa-briefcase"
+      ]);
+
+      let siteState = loadJSON(STORAGE_KEYS.STATE, DEFAULT_STATE);
+      let chatHistory = loadJSON(STORAGE_KEYS.CHAT, DEFAULT_CHAT);
+      let workerUrl = localStorage.getItem(STORAGE_KEYS.WORKER) || "";
+      let ttsEnabled = localStorage.getItem(STORAGE_KEYS.TTS) === "true";
+      let activeServiceIndex = null;
+      let isBusy = false;
+
+      // DOM References
+      const els = {
+        workspace: document.getElementById("workspace"),
+        viewTabs: document.querySelectorAll(".view-tab"),
+        engineDot: document.getElementById("engineDot"),
+        engineStatusText: document.getElementById("engineStatusText"),
+        chatLog: document.getElementById("chatLog"),
+        chatForm: document.getElementById("chatForm"),
+        chatInput: document.getElementById("chatInput"),
+        sendBtn: document.getElementById("sendBtn"),
+        chips: document.querySelectorAll(".chip"),
+        pvBrand: document.getElementById("pvBrand"),
+        pvTagline: document.getElementById("pvTagline"),
+        pvTitle: document.getElementById("pvTitle"),
+        pvDesc: document.getElementById("pvDesc"),
+        pvCtaText: document.getElementById("pvCtaText"),
+        pvServices: document.getElementById("pvServices"),
+        pvFooterBrand: document.getElementById("pvFooterBrand"),
+        backdrop: document.getElementById("backdrop"),
+        settingsDrawer: document.getElementById("settingsDrawer"),
+        openSettingsBtn: document.getElementById("openSettingsBtn"),
+        closeSettingsBtn: document.getElementById("closeSettingsBtn"),
+        workerUrlInput: document.getElementById("workerUrlInput"),
+        saveWorkerBtn: document.getElementById("saveWorkerBtn"),
+        testWorkerBtn: document.getElementById("testWorkerBtn"),
+        ttsToggle: document.getElementById("ttsToggle"),
+        stopAudioBtn: document.getElementById("stopAudioBtn"),
+        exportHtmlBtn: document.getElementById("exportHtmlBtn"),
+        copyHtmlBtn: document.getElementById("copyHtmlBtn"),
+        resetSiteBtn: document.getElementById("resetSiteBtn"),
+        clearChatBtn: document.getElementById("clearChatBtn"),
+        navContactBtn: document.getElementById("navContactBtn"),
+        heroContactBtn: document.getElementById("heroContactBtn"),
+        footerContactBtn: document.getElementById("footerContactBtn"),
+        heroCtaBtn: document.getElementById("heroCtaBtn"),
+        contactModal: document.getElementById("contactModal"),
+        contactBrandLabel: document.getElementById("contactBrandLabel"),
+        mailtoActionBtn: document.getElementById("mailtoActionBtn"),
+        copyEmailBtn: document.getElementById("copyEmailBtn"),
+        inquiryModal: document.getElementById("inquiryModal"),
+        inquiryForm: document.getElementById("inquiryForm"),
+        inqName: document.getElementById("inqName"),
+        inqDetails: document.getElementById("inqDetails"),
+        serviceModal: document.getElementById("serviceModal"),
+        serviceModalIcon: document.getElementById("serviceModalIcon"),
+        serviceModalName: document.getElementById("serviceModalName"),
+        serviceModalDesc: document.getElementById("serviceModalDesc"),
+        editServiceInChatBtn: document.getElementById("editServiceInChatBtn"),
+        inquireServiceBtn: document.getElementById("inquireServiceBtn"),
+        toastStack: document.getElementById("toastStack")
+      };
+
+      function loadJSON(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : structuredClone(fallback);
+        } catch {
+          return structuredClone(fallback);
+        }
       }
 
-      const data = await geminiRes.json();
-      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      function saveState() {
+        localStorage.setItem(STORAGE_KEYS.STATE, JSON.stringify(siteState));
+      }
 
-      if (!rawText) {
-        return new Response(JSON.stringify({ error: "Empty AI response" }), {
-          status: 502,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+      function saveChat() {
+        localStorage.setItem(STORAGE_KEYS.CHAT, JSON.stringify(chatHistory.slice(-40)));
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function sanitizeHex(color, fallback = "#D4AF37") {
+        return /^#[0-9a-fA-F]{6}$/.test(color || "") ? color : fallback;
+      }
+
+      function sanitizeIcon(icon) {
+        const clean = String(icon || "").trim().replace(/^fa-solid\s+/, "");
+        return ALLOWED_ICONS.has(clean) ? clean : "fa-wand-magic-sparkles";
+      }
+
+      function showToast(message, icon = "fa-circle-check") {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerHTML = `<i class="fa-solid ${icon}" style="color:var(--accent)"></i><span>${escapeHtml(message)}</span>`;
+        els.toastStack.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transition = "opacity 0.2s";
+          setTimeout(() => toast.remove(), 220);
+        }, 2800);
+      }
+
+      function speakBackground(text) {
+        if (!ttsEnabled || !("speechSynthesis" in window)) return;
+        try {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = "en-US";
+          utter.rate = 1.02;
+          window.speechSynthesis.speak(utter);
+        } catch {
+          // Silently ignore unsupported TTS environments
+        }
+      }
+
+      function stopAudio() {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+        showToast("Audio playback stopped", "fa-volume-xmark");
+      }
+
+      function updateEngineIndicator() {
+        if (workerUrl) {
+          els.engineDot.classList.add("connected");
+          els.engineStatusText.textContent = "Cloudflare Worker Active";
+        } else {
+          els.engineDot.classList.remove("connected");
+          els.engineStatusText.textContent = "Local Preview Engine";
+        }
+      }
+
+      function setMobileView(view) {
+        els.workspace.setAttribute("data-mobile-view", view);
+        els.viewTabs.forEach((tab) => {
+          const active = tab.dataset.view === view;
+          tab.classList.toggle("active", active);
+          tab.setAttribute("aria-selected", String(active));
         });
       }
 
-      const parsedJson = JSON.parse(rawText);
+      function renderPreview() {
+        const accent = sanitizeHex(siteState.accent, "#D4AF37");
+        document.documentElement.style.setProperty("--accent", accent);
 
-      return new Response(JSON.stringify(parsedJson), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    } catch (err) {
-      return new Response(
-        JSON.stringify({ error: "Proxy execution failed", message: err.message }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        els.pvBrand.textContent = siteState.brand;
+        els.pvTagline.textContent = siteState.tagline;
+        els.pvTitle.textContent = siteState.title;
+        els.pvDesc.textContent = siteState.desc;
+        els.pvCtaText.textContent = siteState.cta;
+        els.pvFooterBrand.textContent = `${siteState.brand} — Powered by BI Design`;
+
+        els.contactBrandLabel.textContent = siteState.brand;
+        els.mailtoActionBtn.href = `mailto:${encodeURIComponent(siteState.email)}?subject=${encodeURIComponent("Project Inquiry — " + siteState.brand)}`;
+
+        els.pvServices.innerHTML = "";
+        const services = Array.isArray(siteState.services) && siteState.services.length
+          ? siteState.services.slice(0, 4)
+          : DEFAULT_STATE.services;
+
+        services.forEach((svc, index) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "service-card";
+          btn.dataset.serviceIndex = String(index);
+          btn.innerHTML = `
+            <div class="service-icon"><i class="fa-solid ${sanitizeIcon(svc.icon)}"></i></div>
+            <div class="service-name">${escapeHtml(svc.name)}</div>
+            <div class="service-text">${escapeHtml(svc.text)}</div>
+            <span class="service-cta">Explore & Edit <i class="fa-solid fa-arrow-right"></i></span>
+          `;
+          els.pvServices.appendChild(btn);
+        });
+      }
+
+      function renderChat() {
+        els.chatLog.innerHTML = "";
+        chatHistory.forEach((entry) => {
+          const div = document.createElement("div");
+          div.className = `msg ${entry.role === "user" ? "user" : "ai"}`;
+          div.innerHTML = `
+            <div>${escapeHtml(entry.text)}</div>
+            ${entry.meta ? `<span class="msg-meta">${escapeHtml(entry.meta)}</span>` : ""}
+          `;
+          els.chatLog.appendChild(div);
+        });
+        els.chatLog.scrollTop = els.chatLog.scrollHeight;
+      }
+
+      function closeAllOverlays() {
+        els.settingsDrawer.classList.remove("open");
+        els.settingsDrawer.setAttribute("aria-hidden", "true");
+        els.contactModal.classList.remove("open");
+        els.inquiryModal.classList.remove("open");
+        els.serviceModal.classList.remove("open");
+        els.backdrop.classList.remove("open");
+      }
+
+      function openDrawer() {
+        closeAllOverlays();
+        els.backdrop.classList.add("open");
+        els.settingsDrawer.classList.add("open");
+        els.settingsDrawer.setAttribute("aria-hidden", "false");
+      }
+
+      function openModal(modalEl) {
+        closeAllOverlays();
+        els.backdrop.classList.add("open");
+        modalEl.classList.add("open");
+      }
+
+      function mergeAIResponse(raw) {
+        if (!raw || typeof raw !== "object") {
+          throw new Error("Invalid JSON payload");
         }
-      );
-    }
-  },
-};
+        const nextServices = Array.isArray(raw.services) && raw.services.length >= 1
+          ? raw.services.slice(0, 4).map((s) => ({
+              icon: sanitizeIcon(s.icon),
+              name: String(s.name || "Digital Service").slice(0, 80),
+              text: String(s.text || "Tailored execution built for modern operations.").slice(0, 220)
+            }))
+          : siteState.services;
+
+        siteState = {
+          brand: String(raw.brand || siteState.brand).slice(0, 80),
+          tagline: String(raw.tagline || siteState.tagline).slice(0, 90),
+          title: String(raw.title || siteState.title).slice(0, 140),
+          desc: String(raw.desc || siteState.desc).slice(0, 320),
+          accent: sanitizeHex(raw.accent, siteState.accent),
+          cta: String(raw.cta || siteState.cta).slice(0, 50),
+          email: (raw.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.email))
+            ? raw.email
+            : siteState.email,
+          services: nextServices
+        };
+
+        saveState();
+        renderPreview();
+      }
+
+      function runLocalEngine(promptText) {
+        const lower = promptText.toLowerCase();
+        const next = structuredClone(siteState);
+
+        // Accent color detection
+        const colorMap = {
+          gold: "#D4AF37",
+          emerald: "#10B981",
+          green: "#22C55E",
+          crimson: "#E11D48",
+          red: "#EF4444",
+          silver: "#D8DEE9",
+          amber: "#F59E0B",
+          violet: "#8B5CF6",
+          purple: "#A855F7",
+          cyan: "#06B6D4"
+        };
+        for (const [name, hex] of Object.entries(colorMap)) {
+          if (lower.includes(name)) {
+            next.accent = hex;
+            break;
+          }
+        }
+        const hexMatch = promptText.match(/#[0-9a-fA-F]{6}\b/);
+        if (hexMatch) next.accent = hexMatch[0];
+
+        // Email update only if explicitly provided
+        const emailMatch = promptText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+        if (emailMatch) next.email = emailMatch[0];
+
+        // Industry templates
+        if (lower.includes("store") || lower.includes("shop") || lower.includes("e-commerce") || lower.includes("luxury")) {
+          next.brand = "BI Commerce";
+          next.tagline = "Luxury Digital Retail";
+          next.title = "Curated Collections Built for Global Conversion";
+          next.desc = "Elevate your flagship storefront with high-speed glassmorphic design, Google search readiness, and seamless customer journeys.";
+          next.cta = "Explore Collection";
+          next.services = [
+            { icon: "fa-bag-shopping", name: "Flagship Storefront", text: "Bespoke product showcases designed to elevate brand perception and average order value." },
+            { icon: "fa-wand-magic-sparkles", name: "Visual Direction", text: "Cohesive packaging, metallic typography, and campaign art direction across every channel." },
+            { icon: "fa-chart-line", name: "Conversion Analytics", text: "Funnel diagnostics and Google performance tracking to maximize return on ad spend." },
+            { icon: "fa-bolt", name: "Instant Checkout Flow", text: "Frictionless mobile shopping journeys optimized for rapid load times." }
+          ];
+        } else if (lower.includes("security") || lower.includes("guard") || lower.includes("shield")) {
+          next.brand = "El Sayed Group";
+          next.tagline = "Executive Protection & Identity";
+          next.title = "Command-Grade Security Operations & Corporate Presence";
+          next.desc = "Delivering disciplined field operations, executive protection standards, and authoritative corporate identity systems.";
+          next.cta = "Request Security Brief";
+          next.services = [
+            { icon: "fa-shield-halved", name: "Facility Protection", text: "24/7 uniformed security staffing with structured access control and operational accountability." },
+            { icon: "fa-briefcase", name: "Executive Escort", text: "Discreet, trained specialists dedicated to leadership transit and private event safety." },
+            { icon: "fa-wand-magic-sparkles", name: "Uniform & Badge Systems", text: "Distinctive corporate identity, ID credentials, and field equipment branding." },
+            { icon: "fa-chart-line", name: "Risk Assessment", text: "Site audits, incident protocols, and continuous operational reporting." }
+          ];
+        } else if (lower.includes("clinic") || lower.includes("medical") || lower.includes("health") || lower.includes("dental")) {
+          next.brand = "BI Health Studio";
+          next.tagline = "Modern Clinical Care";
+          next.title = "Precision Healthcare Backed by Digital Convenience";
+          next.desc = "Streamlined patient communication, specialist profiles, and transparent care pathways accessible from any device.";
+          next.cta = "Book Consultation";
+          next.services = [
+            { icon: "fa-stethoscope", name: "Specialist Diagnostics", text: "Comprehensive evaluations using modern clinical standards and attentive patient care." },
+            { icon: "fa-bolt", name: "Fast Appointment Intake", text: "Direct email scheduling with zero waiting room friction." },
+            { icon: "fa-shield-halved", name: "Confidential Records", text: "Privacy-first communication standards respecting patient data protection." },
+            { icon: "fa-chart-line", name: "Follow-Up Care Plans", text: "Structured progress tracking and clear post-visit guidance." }
+          ];
+        } else if (lower.includes("analytics") || lower.includes("data") || lower.includes("google") || lower.includes("cloud")) {
+          next.brand = "BI Global Solutions";
+          next.tagline = "Data & Google AI Strategy";
+          next.title = "Turn Operational Data into Executive Clarity";
+          next.desc = "Partner with BI Global Solutions for Google AI operating models, supply chain analytics, and real-time decision intelligence.";
+          next.cta = "Schedule Strategy Call";
+          next.services = [
+            { icon: "fa-chart-line", name: "Decision Intelligence", text: "Executive KPI frameworks that translate raw business records into clear action." },
+            { icon: "fa-code", name: "AI Operating Models", text: "Custom Google Gemini integrations and zero-cost automation pipelines." },
+            { icon: "fa-briefcase", name: "Supply Chain Analytics", text: "Forecasting, bottleneck visibility, and margin optimization across operations." },
+            { icon: "fa-bolt", name: "Automated Reporting", text: "Live dashboards replacing manual spreadsheets with reliable real-time metrics." }
+          ];
+        } else if (lower.includes("agency") || lower.includes("studio") || lower.includes("creative")) {
+          next.brand = "BI Design";
+          next.tagline = "AI Creative Studio";
+          next.title = "High-Impact Branding & AI-Driven Web Experiences";
+          next.desc = "We blend sharp visual identity, Google AI workflows, and custom web architecture to launch standout digital brands.";
+          next.cta = "Start Your Brand";
+          next.services = structuredClone(DEFAULT_STATE.services);
+        } else if (lower.includes("service") && activeServiceIndex !== null && next.services[activeServiceIndex]) {
+          next.services[activeServiceIndex].text = promptText.slice(0, 180);
+        } else {
+          // Direct tailored update from prompt text
+          next.tagline = "Custom AI Build";
+          next.title = promptText.length > 72 ? `${promptText.slice(0, 69)}...` : promptText;
+          next.desc = `Custom experience tailored by BI Design based on your brief, powered by clean architecture and Google-ready performance.`;
+        }
+
+        mergeAIResponse(next);
+      }
+
+      async function handlePromptSubmit(promptText) {
+        const trimmed = promptText.trim();
+        if (!trimmed || isBusy) return;
+
+        isBusy = true;
+        els.sendBtn.disabled = true;
+        els.sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>Building</span>`;
+
+        chatHistory.push({ role: "user", text: trimmed, meta: "Just now" });
+        saveChat();
+        renderChat();
+        els.chatInput.value = "";
+
+        let usedWorker = false;
+        if (workerUrl) {
+          try {
+            const response = await fetch(workerUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: trimmed, currentState: siteState })
+            });
+            if (!response.ok) {
+              throw new Error(`Worker HTTP ${response.status}`);
+            }
+            const data = await response.json();
+            mergeAIResponse(data);
+            usedWorker = true;
+          } catch (err) {
+            runLocalEngine(trimmed);
+            showToast(`Worker unavailable (${err.message}). Applied via Local Engine.`, "fa-triangle-exclamation");
+          }
+        } else {
+          runLocalEngine(trimmed);
+        }
+
+        const confirmation = usedWorker
+          ? `Updated ${siteState.brand} live preview via Cloudflare Worker.`
+          : `Updated ${siteState.brand} live preview via Local Preview Engine.`;
+
+        chatHistory.push({
+          role: "ai",
+          text: confirmation,
+          meta: usedWorker ? "Cloudflare Worker" : "Local Engine"
+        });
+        saveChat();
+        renderChat();
+        speakBackground(confirmation);
+
+        if (window.innerWidth < 960) {
+          showToast("Preview updated — switching to Preview", "fa-sparkles");
+          setTimeout(() => setMobileView("preview"), 450);
+        }
+
+        isBusy = false;
+        els.sendBtn.disabled = false;
+        els.sendBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i><span>Build</span>`;
+      }
+
+      function buildStandaloneHTML() {
+        const s = siteState;
+        const accent = sanitizeHex(s.accent, "#D4AF37");
+        const servicesMarkup = (s.services || []).map((svc) => `
+      <div class="card">
+        <div class="icon"><i class="fa-solid ${sanitizeIcon(svc.icon)}"></i></div>
+        <h3>${escapeHtml(svc.name)}</h3>
+        <p>${escapeHtml(svc.text)}</p>
+      </div>`).join("");
+
+        return `<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(s.brand)} — ${escapeHtml(s.tagline)}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root { --bg:#07080A; --text:#F4F6F8; --muted:#9AA2AE; --accent:${accent}; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding:24px; }
+    .wrap { max-width:960px; margin:0 auto; border:1px solid rgba(255,255,255,0.1); border-radius:20px; background:rgba(255,255,255,0.03); overflow:hidden; }
+    header, footer { padding:18px 24px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); }
+    footer { border-bottom:none; border-top:1px solid rgba(255,255,255,0.1); color:var(--muted); font-size:0.85rem; }
+    .hero { text-align:center; padding:56px 24px; border-bottom:1px solid rgba(255,255,255,0.1); }
+    .tag { color:var(--accent); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }
+    h1 { font-size:clamp(1.8rem,4vw,2.7rem); margin:14px 0; }
+    .desc { max-width:600px; margin:0 auto 28px; color:var(--muted); line-height:1.6; }
+    .btn { display:inline-block; padding:12px 22px; border-radius:12px; background:var(--accent); color:#07080A; font-weight:700; text-decoration:none; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; padding:32px 24px; }
+    .card { padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); }
+    .icon { color:var(--accent); font-size:1.2rem; margin-bottom:12px; }
+    .card h3 { margin-bottom:8px; font-size:1rem; }
+    .card p { color:var(--muted); font-size:0.88rem; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <strong>${escapeHtml(s.brand)}</strong>
+      <a class="btn" href="mailto:${encodeURIComponent(s.email)}">Contact Us</a>
+    </header>
+    <section class="hero">
+      <div class="tag">${escapeHtml(s.tagline)}</div>
+      <h1>${escapeHtml(s.title)}</h1>
+      <p class="desc">${escapeHtml(s.desc)}</p>
+      <a class="btn" href="mailto:${encodeURIComponent(s.email)}?subject=${encodeURIComponent(s.cta + " — " + s.brand)}">${escapeHtml(s.cta)}</a>
+    </section>
+    <section class="grid">${servicesMarkup}
+    </section>
+    <footer>
+      <span>${escapeHtml(s.brand)}</span>
+      <a style="color:var(--accent);text-decoration:none;" href="mailto:${encodeURIComponent(s.email)}">Email Inquiry</a>
+    </footer>
+  </div>
+</body>
+</html>`;
+      }
+
+      async function copyText(text, successMsg) {
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast(successMsg);
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          showToast(successMsg);
+        }
+      }
+
+      // Event Bindings
+      els.viewTabs.forEach((tab) => {
+        tab.addEventListener("click", () => setMobileView(tab.dataset.view));
+      });
+
+      els.openSettingsBtn.addEventListener("click", openDrawer);
+      els.closeSettingsBtn.addEventListener("click", closeAllOverlays);
+      els.backdrop.addEventListener("click", closeAllOverlays);
+
+      document.querySelectorAll("[data-close-modal]").forEach((btn) => {
+        btn.addEventListener("click", closeAllOverlays);
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeAllOverlays();
+      });
+
+      els.chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handlePromptSubmit(els.chatInput.value);
+      });
+
+      els.chips.forEach((chip) => {
+        chip.addEventListener("click", () => handlePromptSubmit(chip.dataset.prompt || ""));
+      });
+
+      // Preview Interactive Triggers
+      [els.navContactBtn, els.heroContactBtn, els.footerContactBtn].forEach((btn) => {
+        btn.addEventListener("click", () => openModal(els.contactModal));
+      });
+
+      els.heroCtaBtn.addEventListener("click", () => openModal(els.inquiryModal));
+
+      els.copyEmailBtn.addEventListener("click", () => {
+        copyText(siteState.email, "Email address copied to clipboard");
+      });
+
+      els.inquiryForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = els.inqName.value.trim();
+        const details = els.inqDetails.value.trim();
+        const subject = `Project Inquiry from ${name} — ${siteState.brand}`;
+        const body = `Hello ${siteState.brand} Team,\n\nName/Company: ${name}\n\nProject Brief:\n${details}\n`;
+        window.location.href = `mailto:${encodeURIComponent(siteState.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        closeAllOverlays();
+        els.inquiryForm.reset();
+        showToast("Email draft opened in your mail client");
+      });
+
+      // Delegated Service Card Click
+      els.pvServices.addEventListener("click", (e) => {
+        const card = e.target.closest(".service-card");
+        if (!card) return;
+        const idx = Number(card.dataset.serviceIndex);
+        const svc = siteState.services[idx];
+        if (!svc) return;
+
+        activeServiceIndex = idx;
+        els.serviceModalIcon.innerHTML = `<i class="fa-solid ${sanitizeIcon(svc.icon)}"></i>`;
+        els.serviceModalName.textContent = svc.name;
+        els.serviceModalDesc.textContent = svc.text;
+        openModal(els.serviceModal);
+      });
+
+      els.editServiceInChatBtn.addEventListener("click", () => {
+        const svc = siteState.services[activeServiceIndex];
+        closeAllOverlays();
+        setMobileView("chat");
+        els.chatInput.value = svc ? `Update the "${svc.name}" service to focus on ` : "Update services to ";
+        els.chatInput.focus();
+      });
+
+      els.inquireServiceBtn.addEventListener("click", () => {
+        openModal(els.contactModal);
+      });
+
+      // Settings Actions
+      els.saveWorkerBtn.addEventListener("click", () => {
+        const val = els.workerUrlInput.value.trim();
+        if (val && !/^https:\/\/.+/i.test(val)) {
+          showToast("Worker URL must start with https://", "fa-triangle-exclamation");
+          return;
+        }
+        workerUrl = val;
+        localStorage.setItem(STORAGE_KEYS.WORKER, workerUrl);
+        updateEngineIndicator();
+        showToast(workerUrl ? "Cloudflare Worker endpoint saved" : "Switched to Local Preview Engine");
+      });
+
+      els.testWorkerBtn.addEventListener("click", async () => {
+        const url = els.workerUrlInput.value.trim() || workerUrl;
+        if (!url) {
+          showToast("Enter a Cloudflare Worker URL first", "fa-circle-info");
+          return;
+        }
+        els.testWorkerBtn.disabled = true;
+        els.testWorkerBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Testing...`;
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: "Health check: keep current state intact.", currentState: siteState })
+          });
+          if (res.ok) {
+            showToast("Connection verified (200 OK)", "fa-circle-check");
+          } else {
+            showToast(`Worker responded with HTTP ${res.status}`, "fa-triangle-exclamation");
+          }
+        } catch {
+          showToast("Connection blocked or unreachable (check CORS/Origin)", "fa-circle-xmark");
+        } finally {
+          els.testWorkerBtn.disabled = false;
+          els.testWorkerBtn.innerHTML = `<i class="fa-solid fa-plug"></i> Test Connection`;
+        }
+      });
+
+      els.ttsToggle.addEventListener("change", () => {
+        ttsEnabled = els.ttsToggle.checked;
+        localStorage.setItem(STORAGE_KEYS.TTS, String(ttsEnabled));
+        if (!ttsEnabled && "speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+        showToast(ttsEnabled ? "Background voice enabled" : "Background voice muted");
+      });
+
+      els.stopAudioBtn.addEventListener("click", stopAudio);
+
+      els.exportHtmlBtn.addEventListener("click", () => {
+        const html = buildStandaloneHTML();
+        const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${(siteState.brand || "bi-design").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.html`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast("Standalone HTML downloaded");
+      });
+
+      els.copyHtmlBtn.addEventListener("click", () => {
+        copyText(buildStandaloneHTML(), "Standalone website HTML copied");
+      });
+
+      els.resetSiteBtn.addEventListener("click", () => {
+        siteState = structuredClone(DEFAULT_STATE);
+        saveState();
+        renderPreview();
+        closeAllOverlays();
+        showToast("Website reset to default BI Design state");
+      });
+
+      els.clearChatBtn.addEventListener("click", () => {
+        chatHistory = structuredClone(DEFAULT_CHAT);
+        saveChat();
+        renderChat();
+        closeAllOverlays();
+        showToast("Chat history cleared");
+      });
+
+      // Initialize
+      els.workerUrlInput.value = workerUrl;
+      els.ttsToggle.checked = ttsEnabled;
+      updateEngineIndicator();
+      renderPreview();
+      renderChat();
+    })();
+  </script>
+</body>
+</html>
